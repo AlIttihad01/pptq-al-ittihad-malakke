@@ -1,0 +1,1477 @@
+
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Dashboard Admin PPTQ Al-Ittihad</title>
+<style>
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #f1f5f9;
+    color: #1e293b;
+}
+header {
+    background: #14532d;
+    color: white;
+    padding: 22px;
+    text-align: center;
+}
+.container {
+    max-width: 1100px;
+    margin: 25px auto;
+    padding: 15px;
+}
+.card {
+    background: white;
+    padding: 20px;
+    margin-bottom: 20px;
+    border-radius: 12px;
+    box-shadow: 0 2px 8px #0001;
+}
+input, select {
+    width: 100%;
+    padding: 12px;
+    margin: 7px 0 15px;
+    box-sizing: border-box;
+    border: 1px solid #cbd5e1;
+    border-radius: 7px;
+}
+button {
+    background: #166534;
+    color: white;
+    border: 0;
+    padding: 10px 15px;
+    border-radius: 7px;
+    cursor: pointer;
+    margin: 3px;
+}
+button:disabled {
+    opacity: 0.6;
+}
+.logout, .hapus {
+    background: #b91c1c;
+}
+.edit {
+    background: #1d4ed8;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+th, td {
+    padding: 12px;
+    border-bottom: 1px solid #ddd;
+    text-align: left;
+}
+th {
+    background: #dcfce7;
+}
+.table-wrap {
+    overflow-x: auto;
+}
+#pesan {
+    margin-top: 12px;
+}
+.sukses { color: #166534; }
+.gagal { color: #b91c1c; }
+</style>
+</head>
+<body>
+
+<header>
+    <h2>DASHBOARD ADMIN</h2>
+    <p>PPTQ AL-ITTIHAD MALAKKE BELAWA</p>
+</header>
+
+<div class="container">
+
+    <div class="card">
+        <h3>Selamat Datang, Administrator</h3>
+        <p id="status">Memeriksa akun...</p>
+        <button class="logout" onclick="keluar()">Keluar</button>
+    </div>
+<!-- DASHBOARD KEUANGAN PESANTREN -->
+<div class="card">
+    <h3>💰 Dashboard Keuangan Pesantren</h3>
+
+    <p>Total Saldo Seluruh Santri:</p>
+    <h2 id="totalSaldoSemua">Rp 0</h2>
+
+    <p>Total Setoran:</p>
+    <h3 id="totalSetoranSemua">Rp 0</h3>
+
+    <p>Total Penarikan:</p>
+    <h3 id="totalPenarikanSemua">Rp 0</h3>
+
+    <p>Jumlah Santri:</p>
+    <h3 id="jumlahSantriSemua">0 Santri</h3>
+
+    <button onclick="muatDashboardKeuangan()">
+        🔄 Perbarui Dashboard
+    </button>
+</div>
+    <div class="card">
+        <h3>Tambah Data Santri</h3>
+
+        <form id="formSantri">
+            <label>NIS</label>
+            <input type="text" id="nis" required>
+
+            <label>Nama Lengkap Santri</label>
+            <input type="text" id="nama" required>
+
+            <label>Kelas</label>
+            <input type="text" id="kelas">
+
+            <label>Status</label>
+            <select id="statusSantri">
+                <option value="aktif">Aktif</option>
+                <option value="nonaktif">Nonaktif</option>
+            </select>
+
+            <button type="submit" id="tombolSimpan">
+                SIMPAN DATA SANTRI
+            </button>
+        </form>
+
+        <p id="pesan"></p>
+    </div>
+
+    <div class="card">
+        <h3>Data Santri</h3>
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>NIS</th>
+                        <th>Nama Santri</th>
+                        <th>Kelas</th>
+                        <th>Status</th>
+                        <th>Aksi</th>
+                    </tr>
+                </thead>
+                <tbody id="daftarSantri">
+                    <tr><td colspan="5">Memuat data...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+ 
+    <div class="card">
+        <h3>💰 TABUNGAN SANTRI</h3>
+        <p>Pencatatan setoran dan penarikan tabungan.</p>
+
+        <form id="formTabungan">
+
+            <label>Pilih Nama Santri</label>
+            <select id="pilihSantri" required>
+                <option value="">-- Pilih Santri --</option>
+            </select>
+
+            <label>Jenis Transaksi</label>
+            <select id="jenisTransaksi" required>
+                <option value="setoran">Setoran Tabungan</option>
+                <option value="penarikan">Penarikan Tabungan</option>
+            </select>
+
+            <label>Jumlah Uang (Rupiah)</label>
+            <input
+                type="number"
+                id="jumlahTabungan"
+                min="1"
+                step="1"
+                placeholder="Contoh: 50000"
+                required
+            >
+
+            <label>Keterangan</label>
+            <input
+                type="text"
+                id="keteranganTabungan"
+                placeholder="Contoh: Setoran mingguan"
+            >
+
+            <button type="submit" id="tombolTransaksi">
+                SIMPAN TRANSAKSI
+            </button>
+
+        </form>
+
+        <p id="pesanTabungan"></p>
+
+        <hr>
+
+        <h3>Saldo Tabungan</h3>
+        <h2 id="saldoSantri">Rp 0</h2>
+
+        <h3>Riwayat Transaksi</h3>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Tanggal</th>
+                        <th>Jenis</th>
+                        <th>Jumlah</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody id="riwayatTabungan">
+                    <tr>
+                        <td colspan="4">Pilih santri untuk melihat riwayat.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+            <button type="button" onclick="cetakLaporanTabungan()">
+            CETAK LAPORAN TABUNGAN
+        </button>
+        <button type="button" onclick="cetakLaporanSemuaSantri()">
+    CETAK LAPORAN SELURUH SANTRI
+</button>
+    <button type="button" onclick="cetakLaporanBulanan()">
+    CETAK LAPORAN BULANAN
+</button>
+    <button type="button" onclick="unduhLaporanExcel()">
+    UNDUH LAPORAN EXCEL
+</button>
+    <button type="button" onclick="cetakLaporanRentangTanggal()">
+    LAPORAN TABUNGAN BERDASARKAN TANGGAL
+</button></div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+const SUPABASE_URL =
+    "https://cpdkqqxvjfbcoucelhmr.supabase.co";
+
+const SUPABASE_KEY =
+    "sb_publishable_xWB1iEsnGAZH7RB6yXIWsQ_lr4D0qx2";
+
+const supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_KEY
+);
+
+async function periksaAdmin() {
+    const { data: sessionData } =
+        await supabaseClient.auth.getSession();
+
+    if (!sessionData.session) {
+        window.location.href = "admin.html";
+        return;
+    }
+
+    const { data: profil, error } = await supabaseClient
+        .from("profil_pengguna")
+        .select("nama, peran")
+        .eq("id", sessionData.session.user.id)
+        .single();
+
+    if (error || !profil || profil.peran !== "admin") {
+        await supabaseClient.auth.signOut();
+        window.location.href = "admin.html";
+        return;
+    }
+
+    document.getElementById("status").textContent =
+        "Login sebagai: " + profil.nama;
+
+    tampilkanSantri();
+muatPilihanSantri();
+    muatDashboardKeuangan();
+    }
+
+function tampilkanPesan(teks, berhasil) {
+    const pesan = document.getElementById("pesan");
+    pesan.textContent = teks;
+    pesan.className = berhasil ? "sukses" : "gagal";
+}
+
+async function tampilkanSantri() {
+    const { data, error } = await supabaseClient
+        .from("santri")
+        .select("id, nis, nama_lengkap, kelas, status")
+        .order("id");
+
+    const daftar = document.getElementById("daftarSantri");
+    daftar.innerHTML = "";
+
+    if (error) {
+        daftar.innerHTML =
+            '<tr><td colspan="5">Gagal memuat data.</td></tr>';
+        tampilkanPesan(error.message, false);
+        return;
+    }
+
+    if (!data || data.length === 0) {
+        daftar.innerHTML =
+            '<tr><td colspan="5">Belum ada data santri.</td></tr>';
+        return;
+    }
+
+    data.forEach(santri => {
+        const baris = document.createElement("tr");
+
+        [santri.nis, santri.nama_lengkap,
+         santri.kelas, santri.status].forEach(nilai => {
+            const sel = document.createElement("td");
+            sel.textContent = nilai || "-";
+            baris.appendChild(sel);
+        });
+
+        const aksi = document.createElement("td");
+
+        const tombolEdit = document.createElement("button");
+        tombolEdit.textContent = "EDIT";
+        tombolEdit.className = "edit";
+        tombolEdit.onclick = () => editSantri(santri);
+
+        const tombolHapus = document.createElement("button");
+        tombolHapus.textContent = "HAPUS";
+        tombolHapus.className = "hapus";
+        tombolHapus.onclick = () => hapusSantri(santri);
+
+        aksi.appendChild(tombolEdit);
+        aksi.appendChild(tombolHapus);
+        baris.appendChild(aksi);
+
+        daftar.appendChild(baris);
+    });
+}
+
+async function editSantri(santri) {
+    const nis = prompt("Masukkan NIS:", santri.nis);
+    if (nis === null) return;
+
+    const nama = prompt("Masukkan nama lengkap:", santri.nama_lengkap);
+    if (nama === null) return;
+
+    const kelas = prompt("Masukkan kelas:", santri.kelas || "");
+    if (kelas === null) return;
+
+    const status = prompt(
+        "Masukkan status: aktif atau nonaktif",
+        santri.status || "aktif"
+    );
+    if (status === null) return;
+
+    if (!nis.trim() || !nama.trim()) {
+        tampilkanPesan("NIS dan nama wajib diisi.", false);
+        return;
+    }
+
+    if (!["aktif", "nonaktif"].includes(status.trim().toLowerCase())) {
+        tampilkanPesan("Status harus aktif atau nonaktif.", false);
+        return;
+    }
+
+    const { error } = await supabaseClient
+        .from("santri")
+        .update({
+            nis: nis.trim(),
+            nama_lengkap: nama.trim(),
+            kelas: kelas.trim() || null,
+            status: status.trim().toLowerCase()
+        })
+        .eq("id", santri.id);
+
+    if (error) {
+        tampilkanPesan("Gagal mengedit: " + error.message, false);
+        return;
+    }
+
+    tampilkanPesan("Data santri berhasil diperbarui.", true);
+    tampilkanSantri();
+}
+
+async function hapusSantri(santri) {
+    const yakin = confirm(
+        "Yakin ingin menghapus data santri " +
+        santri.nama_lengkap + "?"
+    );
+
+    if (!yakin) return;
+
+    const { error } = await supabaseClient
+        .from("santri")
+        .delete()
+        .eq("id", santri.id);
+
+    if (error) {
+        tampilkanPesan("Gagal menghapus: " + error.message, false);
+        return;
+    }
+
+    tampilkanPesan("Data santri berhasil dihapus.", true);
+    tampilkanSantri();
+}
+
+document.getElementById("formSantri")
+.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const tombol = document.getElementById("tombolSimpan");
+    tombol.disabled = true;
+    tombol.textContent = "MENYIMPAN...";
+
+    const dataSantri = {
+        nis: document.getElementById("nis").value.trim(),
+        nama_lengkap: document.getElementById("nama").value.trim(),
+        kelas: document.getElementById("kelas").value.trim() || null,
+        status: document.getElementById("statusSantri").value
+    };
+
+    const { error } = await supabaseClient
+        .from("santri")
+        .insert(dataSantri);
+
+    tombol.disabled = false;
+    tombol.textContent = "SIMPAN DATA SANTRI";
+
+    if (error) {
+        tampilkanPesan("Gagal menyimpan: " + error.message, false);
+        return;
+    }
+
+    this.reset();
+    tampilkanPesan("Data santri berhasil disimpan.", true);
+    tampilkanSantri();
+});
+
+async function keluar() {
+    await supabaseClient.auth.signOut();
+    window.location.href = "admin.html";
+}
+
+
+// MEMUAT PILIHAN SANTRI
+async function muatPilihanSantri() {
+    const { data, error } = await supabaseClient
+        .from("santri")
+        .select("id, nis, nama_lengkap")
+        .order("nama_lengkap");
+
+    const pilihan = document.getElementById("pilihSantri");
+
+    if (error) {
+        document.getElementById("pesanTabungan").textContent =
+            "Gagal memuat santri: " + error.message;
+        return;
+    }
+
+    pilihan.innerHTML = '<option value="">-- Pilih Santri --</option>';
+
+    data.forEach(s => {
+        const opsi = document.createElement("option");
+        opsi.value = s.id;
+        opsi.textContent = s.nama_lengkap + " (NIS: " + s.nis + ")";
+        pilihan.appendChild(opsi);
+    });
+}
+
+// FORMAT RUPIAH
+function formatRupiah(nilai) {
+    return new Intl.NumberFormat("id-ID", {
+        style: "currency",
+        currency: "IDR",
+        maximumFractionDigits: 0
+    }).format(Number(nilai) || 0);
+}
+
+// DASHBOARD KEUANGAN PESANTREN
+async function muatDashboardKeuangan() {
+    const elSaldo = document.getElementById("totalSaldoSemua");
+    const elSetoran = document.getElementById("totalSetoranSemua");
+    const elPenarikan = document.getElementById("totalPenarikanSemua");
+    const elJumlah = document.getElementById("jumlahSantriSemua");
+
+    elSaldo.textContent = "Memuat...";
+    elSetoran.textContent = "Memuat...";
+    elPenarikan.textContent = "Memuat...";
+    elJumlah.textContent = "Memuat...";
+
+    const { data: santri, error: errorSantri } = await supabaseClient
+        .from("santri")
+        .select("id");
+
+    if (errorSantri) {
+        alert("Gagal memuat data santri: " + errorSantri.message);
+        return;
+    }
+
+    const { data: transaksi, error: errorTransaksi } = await supabaseClient
+        .from("transaksi_tabungan")
+        .select("jenis, jumlah");
+
+    if (errorTransaksi) {
+        alert("Gagal memuat transaksi: " + errorTransaksi.message);
+        return;
+    }
+
+    const totalSetoran = (transaksi || [])
+        .filter(t => t.jenis === "setoran")
+        .reduce((total, t) => total + Number(t.jumlah || 0), 0);
+
+    const totalPenarikan = (transaksi || [])
+        .filter(t => t.jenis === "penarikan")
+        .reduce((total, t) => total + Number(t.jumlah || 0), 0);
+
+    const totalSaldo = totalSetoran - totalPenarikan;
+
+    elSaldo.textContent = formatRupiah(totalSaldo);
+    elSetoran.textContent = formatRupiah(totalSetoran);
+    elPenarikan.textContent = formatRupiah(totalPenarikan);
+    elJumlah.textContent = (santri || []).length + " Santri";
+}
+    // MEMUAT SALDO DAN RIWAYAT
+async function muatTabungan(santriId) {
+    if (!santriId) return;
+
+    const saldo = document.getElementById("saldoSantri");
+    const riwayat = document.getElementById("riwayatTabungan");
+
+    saldo.textContent = "Memuat saldo...";
+    riwayat.innerHTML =
+        '<tr><td colspan="4">Memuat riwayat...</td></tr>';
+
+    const { data: nilaiSaldo, error: errorSaldo } =
+        await supabaseClient.rpc("hitung_saldo_santri", {
+            p_santri_id: Number(santriId)
+        });
+
+    if (errorSaldo) {
+        saldo.textContent = "Gagal memuat saldo";
+        document.getElementById("pesanTabungan").textContent =
+            errorSaldo.message;
+        return;
+    }
+
+    saldo.textContent = formatRupiah(nilaiSaldo);
+
+    const { data, error } = await supabaseClient
+        .from("transaksi_tabungan")
+        .select("tanggal, jenis, jumlah, keterangan")
+        .eq("santri_id", Number(santriId))
+        .order("tanggal", { ascending: false });
+
+    if (error) {
+        riwayat.innerHTML =
+            '<tr><td colspan="4">Gagal memuat riwayat.</td></tr>';
+        document.getElementById("pesanTabungan").textContent =
+            error.message;
+        return;
+    }
+
+    riwayat.innerHTML = "";
+
+    if (!data || data.length === 0) {
+        riwayat.innerHTML =
+            '<tr><td colspan="4">Belum ada transaksi.</td></tr>';
+        return;
+    }
+
+    data.forEach(t => {
+        const baris = document.createElement("tr");
+
+        const tanggal = new Date(t.tanggal).toLocaleString("id-ID");
+
+        [tanggal, t.jenis, formatRupiah(t.jumlah),
+         t.keterangan || "-"].forEach(nilai => {
+            const sel = document.createElement("td");
+            sel.textContent = nilai;
+            baris.appendChild(sel);
+        });
+
+        riwayat.appendChild(baris);
+    });
+}
+
+// SAAT SANTRI DIPILIH
+document.getElementById("pilihSantri")
+.addEventListener("change", function() {
+    muatTabungan(this.value);
+});
+
+// MENYIMPAN SETORAN DAN PENARIKAN
+document.getElementById("formTabungan")
+.addEventListener("submit", async function(e) {
+    e.preventDefault();
+
+    const santriId =
+        document.getElementById("pilihSantri").value;
+
+    const jenis =
+        document.getElementById("jenisTransaksi").value;
+
+    const jumlah =
+        Number(document.getElementById("jumlahTabungan").value);
+
+    const keterangan =
+        document.getElementById("keteranganTabungan").value.trim();
+
+    const tombol =
+        document.getElementById("tombolTransaksi");
+
+    const pesan =
+        document.getElementById("pesanTabungan");
+
+    if (!santriId || !Number.isSafeInteger(Number(santriId))) {
+        pesan.textContent = "Silakan pilih santri.";
+        return;
+    }
+
+    if (!Number.isSafeInteger(jumlah) || jumlah <= 0) {
+        pesan.textContent = "Jumlah harus berupa Rupiah positif tanpa desimal.";
+        return;
+    }
+
+    tombol.disabled = true;
+    tombol.textContent = "MENYIMPAN...";
+    pesan.textContent = "Sedang menyimpan transaksi...";
+
+    const { error } = await supabaseClient.rpc(
+        "catat_transaksi_tabungan",
+        {
+            p_santri_id: Number(santriId),
+            p_jenis: jenis,
+            p_jumlah: jumlah,
+            p_keterangan: keterangan || null
+        }
+    );
+
+    tombol.disabled = false;
+    tombol.textContent = "SIMPAN TRANSAKSI";
+
+    if (error) {
+        pesan.textContent = "Gagal menyimpan: " + error.message;
+        pesan.className = "gagal";
+        return;
+    }
+
+    pesan.textContent = "Alhamdulillah, transaksi berhasil disimpan.";
+    pesan.className = "sukses";
+
+    document.getElementById("jumlahTabungan").value = "";
+    document.getElementById("keteranganTabungan").value = "";
+
+    await muatTabungan(santriId);
+});
+
+// CETAK LAPORAN TABUNGAN SANTRI
+async function cetakLaporanTabungan() {
+    const santriId = document.getElementById("pilihSantri").value;
+
+    if (!santriId) {
+        alert("Silakan pilih santri terlebih dahulu.");
+        return;
+    }
+
+    const jendela = window.open("", "_blank");
+
+    if (!jendela) {
+        alert("Izinkan pop-up pada browser untuk mencetak laporan.");
+        return;
+    }
+
+    jendela.document.write("<p>Menyiapkan laporan...</p>");
+
+    const { data: santri, error: errorSantri } =
+        await supabaseClient
+        .from("santri")
+        .select("nis, nama_lengkap, kelas")
+        .eq("id", Number(santriId))
+        .single();
+
+    if (errorSantri || !santri) {
+        jendela.close();
+        alert("Data santri gagal dimuat.");
+        return;
+    }
+
+    const { data: transaksi, error } =
+        await supabaseClient
+        .from("transaksi_tabungan")
+        .select("tanggal, jenis, jumlah, keterangan")
+        .eq("santri_id", Number(santriId))
+        .order("tanggal", { ascending: true });
+
+    if (error) {
+        jendela.close();
+        alert("Riwayat transaksi gagal dimuat: " + error.message);
+        return;
+    }
+
+    const saldo = (transaksi || []).reduce((total, t) => {
+        return total + (
+            t.jenis === "setoran"
+            ? Number(t.jumlah)
+            : -Number(t.jumlah)
+        );
+    }, 0);
+
+    const rupiah = nilai =>
+        new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0
+        }).format(nilai);
+
+    const baris = (transaksi || []).map((t, i) => `
+        <tr>
+            <td>${i + 1}</td>
+            <td>${new Date(t.tanggal).toLocaleDateString("id-ID")}</td>
+            <td>${t.jenis === "setoran" ? "Setoran" : "Penarikan"}</td>
+            <td>${rupiah(Number(t.jumlah))}</td>
+            <td>${t.keterangan || "-"}</td>
+        </tr>
+    `).join("");
+
+    jendela.document.open();
+    jendela.document.write(`
+        <!DOCTYPE html>
+        <html lang="id">
+        <head>
+            <meta charset="UTF-8">
+            <title>Laporan Tabungan Santri</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 35px;
+                    color: #222;
+                }
+                h2, h3, p { text-align: center; }
+                .identitas { margin: 25px 0; }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 20px;
+                }
+                th, td {
+                    border: 1px solid #555;
+                    padding: 9px;
+                    text-align: left;
+                }
+                th { background: #dcfce7; }
+                .saldo {
+                    text-align: right;
+                    font-size: 18px;
+                    font-weight: bold;
+                    margin-top: 20px;
+                }
+                .ttd {
+                    margin-top: 65px;
+                    text-align: right;
+                }
+                @media print {
+                    button { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <h2>PPTQ AL-ITTIHAD MALAKKE</h2>
+            <p>LAPORAN TABUNGAN SANTRI</p>
+            <hr>
+
+            <div class="identitas">
+                <p style="text-align:left">
+                    Nama Santri: <b>${santri.nama_lengkap}</b><br>
+                    NIS: ${santri.nis}<br>
+                    Kelas: ${santri.kelas || "-"}
+                </p>
+            </div>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>Tanggal</th>
+                        <th>Jenis</th>
+                        <th>Jumlah</th>
+                        <th>Keterangan</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${baris || '<tr><td colspan="5">Belum ada transaksi.</td></tr>'}
+                </tbody>
+            </table>
+
+            <p class="saldo">Saldo Akhir: ${rupiah(saldo)}</p>
+
+            <div class="ttd">
+                Belawa, ${new Date().toLocaleDateString("id-ID")}<br>
+                Administrator,<br><br><br><br>
+                <b>Pengelola Tabungan PPTQ Al-Ittihad</b>
+            </div>
+
+            <button onclick="window.print()">CETAK LAPORAN</button>
+        </body>
+        </html>
+    `);
+    jendela.document.close();
+}
+
+
+// CETAK LAPORAN SELURUH SANTRI
+async function cetakLaporanSemuaSantri() {
+    const jendela = window.open("", "_blank");
+
+    if (!jendela) {
+        alert("Izinkan pop-up pada browser.");
+        return;
+    }
+
+    jendela.document.write("<p>Menyiapkan laporan...</p>");
+
+    const { data: santri, error: errorSantri } =
+        await supabaseClient
+        .from("santri")
+        .select("id, nis, nama_lengkap, kelas, status")
+        .order("nama_lengkap");
+
+    if (errorSantri) {
+        jendela.close();
+        alert("Gagal memuat data santri: " + errorSantri.message);
+        return;
+    }
+
+    const { data: transaksi, error } =
+        await supabaseClient
+        .from("transaksi_tabungan")
+        .select("santri_id, jenis, jumlah");
+
+    if (error) {
+        jendela.close();
+        alert("Gagal memuat transaksi: " + error.message);
+        return;
+    }
+
+    const rupiah = nilai =>
+        new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0
+        }).format(nilai);
+
+    let totalSaldo = 0;
+
+    const baris = (santri || []).map((s, i) => {
+        const daftar = (transaksi || []).filter(
+            t => Number(t.santri_id) === Number(s.id)
+        );
+
+        const setoran = daftar
+            .filter(t => t.jenis === "setoran")
+            .reduce((a, t) => a + Number(t.jumlah), 0);
+
+        const penarikan = daftar
+            .filter(t => t.jenis === "penarikan")
+            .reduce((a, t) => a + Number(t.jumlah), 0);
+
+        const saldo = setoran - penarikan;
+        totalSaldo += saldo;
+
+        return `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${s.nis}</td>
+                <td>${s.nama_lengkap}</td>
+                <td>${s.kelas || "-"}</td>
+                <td>${rupiah(setoran)}</td>
+                <td>${rupiah(penarikan)}</td>
+                <td>${rupiah(saldo)}</td>
+            </tr>
+        `;
+    }).join("");
+
+    jendela.document.open();
+    jendela.document.write(`
+        <!DOCTYPE html>
+        <html lang="id">
+        <head>
+            <meta charset="UTF-8">
+            <title>Laporan Seluruh Tabungan Santri</title>
+            <style>
+                body { font-family: Arial; margin: 25px; }
+                h2, p { text-align: center; }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 25px;
+                }
+                th, td {
+                    border: 1px solid #555;
+                    padding: 8px;
+                    font-size: 12px;
+                }
+                th { background: #dcfce7; }
+                .total {
+                    text-align: right;
+                    font-weight: bold;
+                    margin-top: 20px;
+                }
+                @media print {
+                    button { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <h2>PPTQ AL-ITTIHAD MALAKKE</h2>
+            <p>LAPORAN TABUNGAN SELURUH SANTRI</p>
+            <hr>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>NIS</th>
+                        <th>Nama Santri</th>
+                        <th>Kelas</th>
+                        <th>Setoran</th>
+                        <th>Penarikan</th>
+                        <th>Saldo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${baris || '<tr><td colspan="7">Belum ada data santri.</td></tr>'}
+                </tbody>
+            </table>
+            <p class="total">
+                Total Saldo Seluruh Santri: ${rupiah(totalSaldo)}
+            </p>
+            <p>Belawa, ${new Date().toLocaleDateString("id-ID")}</p>
+            <p>Pengelola Tabungan PPTQ Al-Ittihad</p>
+            <button onclick="window.print()">CETAK LAPORAN</button>
+        </body>
+        </html>
+    `);
+    jendela.document.close();
+}
+
+   
+// CETAK LAPORAN TABUNGAN BULANAN
+async function cetakLaporanBulanan() {
+    const bulanInput = prompt("Masukkan bulan (1-12):");
+    if (bulanInput === null) return;
+
+    const bulan = Number(bulanInput);
+    if (!Number.isInteger(bulan) || bulan < 1 || bulan > 12) {
+        alert("Bulan harus diisi angka 1 sampai 12.");
+        return;
+    }
+
+    const tahunInput = prompt("Masukkan tahun, contoh: 2026:");
+    if (tahunInput === null) return;
+
+    const tahun = Number(tahunInput);
+    if (!Number.isInteger(tahun) || tahun < 2000 || tahun > 2100) {
+        alert("Tahun tidak valid.");
+        return;
+    }
+
+    const jendela = window.open("", "_blank");
+    if (!jendela) {
+        alert("Izinkan pop-up pada browser.");
+        return;
+    }
+
+    jendela.document.write("<p>Menyiapkan laporan bulanan...</p>");
+
+    const awal = new Date(tahun, bulan - 1, 1);
+    const akhir = new Date(tahun, bulan, 1);
+    const awalISO = awal.toISOString();
+    const akhirISO = akhir.toISOString();
+
+    const { data: santri, error: errorSantri } =
+        await supabaseClient
+        .from("santri")
+        .select("id, nis, nama_lengkap, kelas")
+        .order("nama_lengkap");
+
+    if (errorSantri) {
+        jendela.close();
+        alert("Gagal memuat santri: " + errorSantri.message);
+        return;
+    }
+
+    const { data: transaksi, error } =
+        await supabaseClient
+        .from("transaksi_tabungan")
+        .select("santri_id, jenis, jumlah, tanggal")
+        .lt("tanggal", akhirISO)
+        .order("tanggal");
+
+    if (error) {
+        jendela.close();
+        alert("Gagal memuat transaksi: " + error.message);
+        return;
+    }
+
+    const rupiah = nilai =>
+        new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0
+        }).format(nilai);
+
+    let totalSaldo = 0;
+    let totalSetoranBulan = 0;
+    let totalPenarikanBulan = 0;
+
+    const baris = (santri || []).map((s, i) => {
+        const daftar = (transaksi || []).filter(
+            t => Number(t.santri_id) === Number(s.id)
+        );
+
+        const transaksiBulan = daftar.filter(t => {
+            const waktu = new Date(t.tanggal).getTime();
+            return waktu >= awal.getTime() &&
+                   waktu < akhir.getTime();
+        });
+
+        const setoran = transaksiBulan
+            .filter(t => t.jenis === "setoran")
+            .reduce((a, t) => a + Number(t.jumlah), 0);
+
+        const penarikan = transaksiBulan
+            .filter(t => t.jenis === "penarikan")
+            .reduce((a, t) => a + Number(t.jumlah), 0);
+
+        const saldoAkhir = daftar.reduce((a, t) => {
+            return a + (
+                t.jenis === "setoran"
+                ? Number(t.jumlah)
+                : -Number(t.jumlah)
+            );
+        }, 0);
+
+        totalSetoranBulan += setoran;
+        totalPenarikanBulan += penarikan;
+        totalSaldo += saldoAkhir;
+
+        return `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${s.nis}</td>
+                <td>${s.nama_lengkap}</td>
+                <td>${s.kelas || "-"}</td>
+                <td>${rupiah(setoran)}</td>
+                <td>${rupiah(penarikan)}</td>
+                <td>${rupiah(saldoAkhir)}</td>
+            </tr>
+        `;
+    }).join("");
+
+    const namaBulan = awal.toLocaleDateString("id-ID", {
+        month: "long",
+        year: "numeric"
+    });
+
+    jendela.document.open();
+    jendela.document.write(`
+        <!DOCTYPE html>
+        <html lang="id">
+        <head>
+            <meta charset="UTF-8">
+            <title>Laporan Tabungan Bulanan</title>
+            <style>
+                body { font-family: Arial; margin: 25px; }
+                h2, p { text-align: center; }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 25px;
+                }
+                th, td {
+                    border: 1px solid #555;
+                    padding: 8px;
+                    font-size: 12px;
+                }
+                th { background: #dcfce7; }
+                .total {
+                    text-align: right;
+                    font-weight: bold;
+                    margin-top: 20px;
+                }
+                @media print {
+                    button { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <h2>PPTQ AL-ITTIHAD MALAKKE</h2>
+            <p>LAPORAN TABUNGAN BULAN ${namaBulan.toUpperCase()}</p>
+            <hr>
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>NIS</th>
+                        <th>Nama Santri</th>
+                        <th>Kelas</th>
+                        <th>Setoran Bulan Ini</th>
+                        <th>Penarikan Bulan Ini</th>
+                        <th>Saldo Akhir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${baris || '<tr><td colspan="7">Belum ada data santri.</td></tr>'}
+                </tbody>
+            </table>
+            <p class="total">Total Setoran Bulan Ini: ${rupiah(totalSetoranBulan)}</p>
+            <p class="total">Total Penarikan Bulan Ini: ${rupiah(totalPenarikanBulan)}</p>
+            <p class="total">Total Saldo Akhir: ${rupiah(totalSaldo)}</p>
+            <p>Belawa, ${new Date().toLocaleDateString("id-ID")}</p>
+            <p>Pengelola Tabungan PPTQ Al-Ittihad</p>
+            <button onclick="window.print()">CETAK LAPORAN</button>
+        </body>
+        </html>
+    `);
+    jendela.document.close();
+}
+
+ 
+// UNDUH LAPORAN TABUNGAN EXCEL
+async function unduhLaporanExcel() {
+    alert("Sedang menyiapkan laporan Excel...");
+
+    const { data: santri, error: errorSantri } =
+        await supabaseClient
+        .from("santri")
+        .select("id, nis, nama_lengkap, kelas")
+        .order("nama_lengkap");
+
+    if (errorSantri) {
+        alert("Gagal memuat santri: " + errorSantri.message);
+        return;
+    }
+
+    const { data: transaksi, error } =
+        await supabaseClient
+        .from("transaksi_tabungan")
+        .select("santri_id, jenis, jumlah");
+
+    if (error) {
+        alert("Gagal memuat transaksi: " + error.message);
+        return;
+    }
+
+    const rupiahAngka = nilai =>
+        Number(nilai || 0);
+
+    const amankanTeks = nilai => {
+        let teks = String(nilai ?? "");
+        if (/^[=+\-@]/.test(teks)) teks = "'" + teks;
+        return '"' + teks.replace(/"/g, '""') + '"';
+    };
+
+    const baris = [
+        [
+            "No.",
+            "NIS",
+            "Nama Santri",
+            "Kelas",
+            "Total Setoran",
+            "Total Penarikan",
+            "Saldo Akhir"
+        ]
+    ];
+
+    let totalSetoran = 0;
+    let totalPenarikan = 0;
+
+    (santri || []).forEach((s, i) => {
+        const daftar = (transaksi || []).filter(
+            t => Number(t.santri_id) === Number(s.id)
+        );
+
+        const setoran = daftar
+            .filter(t => t.jenis === "setoran")
+            .reduce((a, t) => a + rupiahAngka(t.jumlah), 0);
+
+        const penarikan = daftar
+            .filter(t => t.jenis === "penarikan")
+            .reduce((a, t) => a + rupiahAngka(t.jumlah), 0);
+
+        totalSetoran += setoran;
+        totalPenarikan += penarikan;
+
+        baris.push([
+            i + 1,
+            amankanTeks(s.nis),
+            amankanTeks(s.nama_lengkap),
+            amankanTeks(s.kelas || "-"),
+            setoran,
+            penarikan,
+            setoran - penarikan
+        ]);
+    });
+
+    baris.push([]);
+    baris.push([
+        "",
+        "",
+        "",
+        "TOTAL SELURUH SANTRI",
+        totalSetoran,
+        totalPenarikan,
+        totalSetoran - totalPenarikan
+    ]);
+
+    const isiCSV = "\uFEFF" + baris
+        .map(row => row.join(";"))
+        .join("\r\n");
+
+    const file = new Blob([isiCSV], {
+        type: "text/csv;charset=utf-8;"
+    });
+
+    const url = URL.createObjectURL(file);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = "Laporan_Tabungan_Seluruh_Santri.csv";
+
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+
+    URL.revokeObjectURL(url);
+
+    alert("Laporan berhasil diunduh. Silakan buka dengan Microsoft Excel.");
+}
+// CETAK LAPORAN TABUNGAN BERDASARKAN RENTANG TANGGAL
+async function cetakLaporanRentangTanggal() {
+
+    const tanggalAwal = prompt(
+        "Masukkan tanggal awal (YYYY-MM-DD), contoh: 2026-11-01"
+    );
+    if (tanggalAwal === null) return;
+
+    const tanggalAkhir = prompt(
+        "Masukkan tanggal akhir (YYYY-MM-DD), contoh: 2026-11-30"
+    );
+    if (tanggalAkhir === null) return;
+
+    const polaTanggal = /^\d{4}-\d{2}-\d{2}$/;
+
+    if (!polaTanggal.test(tanggalAwal) ||
+        !polaTanggal.test(tanggalAkhir)) {
+        alert("Format tanggal harus YYYY-MM-DD.");
+        return;
+    }
+
+    const awal = new Date(tanggalAwal + "T00:00:00");
+    const akhir = new Date(tanggalAkhir + "T00:00:00");
+
+   const tanggalAwalValid =
+    awal.getFullYear() === Number(tanggalAwal.slice(0, 4)) &&
+    awal.getMonth() + 1 === Number(tanggalAwal.slice(5, 7)) &&
+    awal.getDate() === Number(tanggalAwal.slice(8, 10));
+
+const tanggalAkhirValid =
+    akhir.getFullYear() === Number(tanggalAkhir.slice(0, 4)) &&
+    akhir.getMonth() + 1 === Number(tanggalAkhir.slice(5, 7)) &&
+    akhir.getDate() === Number(tanggalAkhir.slice(8, 10));
+
+if (!tanggalAwalValid || !tanggalAkhirValid || akhir < awal) {
+    alert("Tanggal tidak valid. Periksa kembali tanggal awal dan akhir.");
+    return;
+}
+
+    const akhirBesok = new Date(akhir);
+    akhirBesok.setDate(akhirBesok.getDate() + 1);
+
+    const awalISO = awal.toISOString();
+    const akhirISO = akhirBesok.toISOString();
+
+    const jendela = window.open("", "_blank");
+
+    if (!jendela) {
+        alert("Izinkan pop-up pada browser untuk mencetak laporan.");
+        return;
+    }
+
+    jendela.document.write("<p>Menyiapkan laporan tabungan...</p>");
+
+    const { data: santri, error: errorSantri } =
+        await supabaseClient
+        .from("santri")
+        .select("id, nis, nama_lengkap, kelas")
+        .order("nama_lengkap");
+
+    if (errorSantri) {
+        jendela.close();
+        alert("Gagal memuat santri: " + errorSantri.message);
+        return;
+    }
+
+    const { data: transaksi, error } =
+        await supabaseClient
+        .from("transaksi_tabungan")
+        .select("santri_id, jenis, jumlah, tanggal")
+        .lt("tanggal", akhirISO)
+        .order("tanggal");
+
+    if (error) {
+        jendela.close();
+        alert("Gagal memuat transaksi: " + error.message);
+        return;
+    }
+
+    const rupiah = nilai =>
+        new Intl.NumberFormat("id-ID", {
+            style: "currency",
+            currency: "IDR",
+            maximumFractionDigits: 0
+        }).format(nilai);
+
+    const formatTanggal = tanggal =>
+        new Date(tanggal + "T00:00:00")
+        .toLocaleDateString("id-ID");
+
+    let totalSetoran = 0;
+    let totalPenarikan = 0;
+    let totalSaldo = 0;
+
+    const baris = (santri || []).map((s, i) => {
+
+        const daftar = (transaksi || []).filter(
+            t => Number(t.santri_id) === Number(s.id)
+        );
+
+        const transaksiPeriode = daftar.filter(t => {
+            const waktu = new Date(t.tanggal).getTime();
+            return waktu >= new Date(awalISO).getTime() &&
+                   waktu < new Date(akhirISO).getTime();
+        });
+
+        const setoran = transaksiPeriode
+            .filter(t => t.jenis === "setoran")
+            .reduce((a, t) => a + Number(t.jumlah), 0);
+
+        const penarikan = transaksiPeriode
+            .filter(t => t.jenis === "penarikan")
+            .reduce((a, t) => a + Number(t.jumlah), 0);
+
+        const saldoAkhir = daftar.reduce((a, t) => {
+            return a + (
+                t.jenis === "setoran"
+                ? Number(t.jumlah)
+                : -Number(t.jumlah)
+            );
+        }, 0);
+
+        totalSetoran += setoran;
+        totalPenarikan += penarikan;
+        totalSaldo += saldoAkhir;
+
+        return `
+            <tr>
+                <td>${i + 1}</td>
+                <td>${s.nis}</td>
+                <td>${s.nama_lengkap}</td>
+                <td>${s.kelas || "-"}</td>
+                <td>${rupiah(setoran)}</td>
+                <td>${rupiah(penarikan)}</td>
+                <td>${rupiah(saldoAkhir)}</td>
+            </tr>
+        `;
+    }).join("");
+
+    jendela.document.open();
+    jendela.document.write(`
+        <!DOCTYPE html>
+        <html lang="id">
+        <head>
+            <meta charset="UTF-8">
+            <title>Laporan Tabungan Berdasarkan Tanggal</title>
+            <style>
+                body {
+                    font-family: Arial, sans-serif;
+                    margin: 25px;
+                }
+                h2, p { text-align: center; }
+                table {
+                    width: 100%;
+                    border-collapse: collapse;
+                    margin-top: 25px;
+                }
+                th, td {
+                    border: 1px solid #555;
+                    padding: 8px;
+                    font-size: 12px;
+                }
+                th { background: #dcfce7; }
+                .total {
+                    text-align: right;
+                    font-weight: bold;
+                    margin-top: 15px;
+                }
+                @media print {
+                    button { display: none; }
+                }
+            </style>
+        </head>
+        <body>
+            <h2>PPTQ AL-ITTIHAD MALAKKE</h2>
+            <p>LAPORAN TABUNGAN SANTRI</p>
+            <p>
+                Periode:
+                ${formatTanggal(tanggalAwal)}
+                sampai
+                ${formatTanggal(tanggalAkhir)}
+            </p>
+            <hr>
+
+            <table>
+                <thead>
+                    <tr>
+                        <th>No.</th>
+                        <th>NIS</th>
+                        <th>Nama Santri</th>
+                        <th>Kelas</th>
+                        <th>Setoran Periode</th>
+                        <th>Penarikan Periode</th>
+                        <th>Saldo Akhir</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    ${baris || '<tr><td colspan="7">Belum ada data santri.</td></tr>'}
+                </tbody>
+            </table>
+
+            <p class="total">
+                Total Setoran Periode: ${rupiah(totalSetoran)}
+            </p>
+            <p class="total">
+                Total Penarikan Periode: ${rupiah(totalPenarikan)}
+            </p>
+            <p class="total">
+                Total Saldo Akhir Seluruh Santri: ${rupiah(totalSaldo)}
+            </p>
+
+            <p>Belawa, ${new Date().toLocaleDateString("id-ID")}</p>
+            <p>Pengelola Tabungan PPTQ Al-Ittihad</p>
+
+            <button onclick="window.print()">CETAK LAPORAN</button>
+        </body>
+        </html>
+    `);
+
+    jendela.document.close();
+}
+
+
+
+
+    
+    // MEMUAT PILIHAN SANTRI SETELAH LOGIN ADMIN
+periksaAdmin();
+</script>
+
+</body>
+</html>
